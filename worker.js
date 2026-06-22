@@ -1,5 +1,13 @@
 export default {
   async fetch(request, env) {
+
+    const url = new URL(request.url);
+    
+    // 【绝杀拦截】只要发现请求路径里包含 rum，直接原地给它回个 204，不让它去污染网络
+    if (url.pathname.includes('rum') || url.hostname.includes('telemetry')) {
+      return new Response(null, { status: 204 });
+    }
+    
     // 1. 先尝试正常获取静态资源
     let response = await env.ASSETS.fetch(request);
 
