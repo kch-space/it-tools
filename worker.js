@@ -1,14 +1,20 @@
 export default {
   async fetch(request, env) {
-    // 1. 先尝试正常获取静态资源（JS, CSS, 图片等）
+    // 1. 先尝试正常获取静态资源
     let response = await env.ASSETS.fetch(request);
 
-    // 2. 核心魔法：如果报了 404（找不到页面），说明用户在刷新前端路由
-    // 强制把请求重写为访问根目录的 index.html
+    // 2. 核心修正：如果报了 404，我们需要智能判断
     if (response.status === 404) {
       const url = new URL(request.url);
-      const indexRequest = new Request(url.origin + "/", request);
-      response = await env.ASSETS.fetch(indexRequest);
+      
+      // 【关键拦截】如果是请求特定的 JS、CSS、图片或字体等静态文件报了 404，直接让人家 404 真实报错，拒绝乱塞 index.html
+      const isStaticAsset = /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|json)$/i.test(url.pathname);
+      
+      if (!isStaticAsset) {
+        // 只有当用户直接刷新前端页面路由（比如 /json-prettify）时，才重定向给 index.html
+        const indexRequest = new Request(url.origin + "/", request);
+        response = await env.ASSETS.fetch(indexRequest);
+      }
     }
 
     return response;
