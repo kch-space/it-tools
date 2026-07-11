@@ -3,11 +3,5 @@
   "compatibility_date": "2024-12-01",
   "assets": {
     "directory": "./dist"
-  },
-  // 加上下面这段配置，强制指定构建环境的 Node 版本
-  "build": {
-    "environment": {
-      "NODE_VERSION": "22"
-    }
   }
 }
