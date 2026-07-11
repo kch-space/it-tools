@@ -1,0 +1,7 @@
+{
+  "name": "it-tools",
+  "compatibility_date": "2026-06-04",
+  "assets": {
+    "directory": "./dist"
+  }
+}
